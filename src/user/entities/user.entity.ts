@@ -1,19 +1,28 @@
 import { Entity, Column, PrimaryGeneratedColumn, Generated } from "typeorm";
 import { userType } from "../enum/userType";
+import { IsNotEmpty, IsEmail } from 'class-validator';
 
 @Entity()
 export class User {
     @PrimaryGeneratedColumn()
     @Generated("uuid")
-    user_id: string;
+    @IsNotEmpty()
+    userId: string;
 
     @Column()
+    @IsNotEmpty()
     name: string;
 
     @Column()
-    last_name: string;
+    @IsNotEmpty()
+    lastName: string;
 
-    @Column({ type: "varchar" })
+    @Column()
+    @IsNotEmpty()
+    @IsEmail()
+    email: string
+
+    @Column({ type: "varchar", default: "main" })
     status: userType;
 
 }
