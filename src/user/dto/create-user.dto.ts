@@ -1,12 +1,14 @@
-import { userType } from "../enum/userType";
-import { IsNotEmpty, IsEmail } from 'class-validator';
+import { IsNotEmpty, IsEmail, IsOptional, IsArray } from 'class-validator';
 
 export class CreateUserDto {
     @IsNotEmpty()
-    name: string
+    name: string;
     @IsNotEmpty()
     lastName: string;
     @IsEmail()
+    @IsNotEmpty()
     email: string;
-    status: userType;
+    @IsArray()
+    @IsOptional()
+    status: string[];
 }

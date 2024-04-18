@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, HttpStatus, Injectable, NotFoundException, Param, ParseUUIDPipe } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -14,17 +14,30 @@ export class UserService {
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
-    const user = this.userRepository.create(createUserDto);
-    await this.userRepository.save(user);
-    return user;
+    try {
+      const user = this.userRepository.create(createUserDto);
+      await this.userRepository.save(user);
+      return user;
+    } catch(error) {
+      throw new BadRequestException({
+        status: HttpStatus.BAD_REQUEST,
+        error: error.detail,
+      })
+    }
   }
 
-  findAll() {
-    return `This action returns all user`;
+  async findAll() {
+    const user = this.userRepository.find();
+    return await user;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOne(userId: string) {
+    const user = await this.userRepository.findOneBy({userId});
+      if (!user) {
+        throw new NotFoundException(`User with id ${userId} doesn't exists`)
+      }
+
+      return user;
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {
