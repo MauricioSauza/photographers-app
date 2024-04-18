@@ -1,5 +1,4 @@
 import { Entity, Column, PrimaryGeneratedColumn, Generated } from "typeorm";
-import { userType } from "../enum/userType";
 import { IsNotEmpty, IsEmail } from 'class-validator';
 
 @Entity()
@@ -15,14 +14,18 @@ export class User {
 
     @Column()
     @IsNotEmpty()
-    lastName: string;
+    lastName: string; 
 
-    @Column()
-    @IsNotEmpty()
+    @Column({
+        type: 'varchar',
+        unique: true,
+    })
     @IsEmail()
-    email: string
+    email: string;
 
-    @Column({ type: "varchar", default: "main" })
-    status: userType;
-
+    @Column('varchar', {
+        array: true,
+        default: ['main']
+    })
+    status: string[];
 }
