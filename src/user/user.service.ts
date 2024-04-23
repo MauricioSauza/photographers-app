@@ -33,18 +33,38 @@ export class UserService {
 
   async findOne(userId: string) {
     const user = await this.userRepository.findOneBy({userId});
-      if (!user) {
-        throw new NotFoundException(`User with id ${userId} doesn't exists`)
-      }
+    if (!user) {
+      throw new NotFoundException(`User with id ${userId} doesn't exists`);
+    }
+    
+    return user;
+  }
+  
+  async update(id: string, updateUserDto: UpdateUserDto) {
+    const user = await this.userRepository.preload({
+      userId: id,
+      ...updateUserDto
+    });
 
+    if (!user) {
+      throw new NotFoundException(`Uawe with id ${id} doesn't exists`);
+    }
+
+    try {
+      await this.userRepository.save(user);
       return user;
+    } catch (error) {
+      throw new BadRequestException({
+        status: HttpStatus.BAD_REQUEST,
+        error: error.detail,
+      })
+    }
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
-  }
+  async remove(userId: string) {
+    const user = await this.findOne(userId);
+    await this.userRepository.remove(user);
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+    return user;
   }
 }
