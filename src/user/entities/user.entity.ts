@@ -23,6 +23,18 @@ export class User {
     @IsEmail()
     email: string;
 
+    @Column({
+        default: true,
+    })
+    isActive: boolean;
+
+    @Column({
+        type: 'varchar',
+        select: false,
+    })
+    @IsNotEmpty()
+    password: string;
+
     @Column('varchar', {
         array: true,
         default: ['main']
